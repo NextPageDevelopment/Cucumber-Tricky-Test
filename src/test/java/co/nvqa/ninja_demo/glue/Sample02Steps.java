@@ -73,34 +73,51 @@ public class Sample02Steps
         takesScreenshot();
         pause(DELAY_IN_MILLIS);
     }
-
-    @When("^I type \"([^\"]*)\" on the search input$")
-    public void iTypeOnTheSearchInput(String searchText)
+    
+    @When("^I type \"([^\"]*)\" for username and \"([^\"]*)\" for password")
+    public void iTypeCredentials(String username, String password)
     {
-        WebElement searchInputWe = webDriver.findElement(By.xpath("//input[@id='searchInput']"));
-        searchInputWe.sendKeys(searchText);
-        scenario.write("User typed on 'Search Input' field.");
-        takesScreenshot();
-        pause(DELAY_IN_MILLIS);
+    	WebElement firstLabel = webDriver.findElement(By.xpath("//form[not(contains(@style,'display: none'))]//label[1]"));
+		String content = firstLabel.getText();
+		String usernameSelector = "//form[not(contains(@style,'display: none'))]//input[1]";
+		String passwordSelector = "//form[not(contains(@style,'display: none'))]//input[2]";
+		if(content.toLowerCase()=="password");
+		{
+			usernameSelector = "//form[not(contains(@style,'display: none'))]//input[2]";
+			passwordSelector = "//form[not(contains(@style,'display: none'))]//input[1]";
+		}
+    WebElement searchInputPass = webDriver.findElement(By.xpath(passwordSelector));
+    searchInputPass.sendKeys(password);
+    scenario.write("Password typed on 'Password' field.");
+    takesScreenshot();
+    
+    WebElement searchInputUsername = webDriver.findElement(By.xpath(usernameSelector));
+    searchInputUsername.sendKeys(username);
+    scenario.write("Username typed on 'Username' field.");
+    takesScreenshot();
+    pause(DELAY_IN_MILLIS);
     }
+    
+    
 
     @And("^I click submit button$")
     public void iClickSubmitButton()
     {
-        WebElement submitButtonWe = webDriver.findElement(By.xpath("//button[@type='submit']"));
+    		String selector = "//form[not(contains(@style,'display: none'))]//button[1]";
+        WebElement submitButtonWe = webDriver.findElement(By.xpath(selector));
         submitButtonWe.click();
         scenario.write("User clicked 'Submit' button.");
         takesScreenshot();
         pause(DELAY_IN_MILLIS);
     }
 
-    @Then("^I should see the title is \"([^\"]*)\"$")
+    @Then("^I should see \"([^\"]*)\"$")
     public void isShouldSeeTheTitleIs(String expectedPageTitle)
     {
-        WebElement firstHeadingWe = webDriver.findElement(By.xpath("//h1[@id='firstHeading']"));
-        String actualPageTitle = firstHeadingWe.getText();
-        scenario.write("Page Title = "+actualPageTitle);
-        Assert.assertEquals("Title is different.", expectedPageTitle, actualPageTitle);
+        WebElement firstHeadingWe = webDriver.findElement(By.xpath("//p[@id='result']"));
+        String resultContent = firstHeadingWe.getText();
+        scenario.write("Result = "+resultContent);
+        Assert.assertEquals("Result is different.", expectedPageTitle, resultContent);
         takesScreenshot();
         pause(DELAY_IN_MILLIS);
     }
